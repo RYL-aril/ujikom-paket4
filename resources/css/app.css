@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@source "../views/**/*.blade.php";
+@source "../views/**/*.js";
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
+
+@theme {
+    --color-background: #f6f2ea;
+    --color-surface: #fbf8f3;
+    --color-ink: #2c2622;
+    --color-coffee: #6f4e37;
+    --color-muted: #8b7d73;
+    --color-accent: #6f4e37;
+
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+
+    --radius-default: 0.5rem;
+    --radius-lg: 0.75rem;
+
+    --elevation-1: 0 1px 6px rgba(44, 38, 34, 0.06);
+    --elevation-2: 0 6px 18px rgba(44, 38, 34, 0.08);
+
+    --font-serif: "Georgia", "Cambria", "Times New Roman", serif;
+}
+
+@layer base {
+    html,
+    body {
+        background-color: var(--color-background);
+        color: var(--color-ink);
+        font-family: var(--font-serif);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    p {
+        margin: 0 0 var(--space-4) 0;
+        color: var(--color-ink);
+        opacity: 0.95;
+        line-height: 1.6;
+    }
+    h1,
+    h2,
+    h3 {
+        color: var(--color-ink);
+        font-weight: 600;
+        margin: 0 0 var(--space-4) 0;
+    }
+}
