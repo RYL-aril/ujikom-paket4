@@ -10,7 +10,12 @@
     </div>
 
     <nav class="flex-1 overflow-y-auto py-6">
-        <x-layouts.partials.sidebar-item icon="dashboard" label="Dashboard" :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" />
+        {{-- Dashboard (Sesuai Role) --}}
+        @if(auth()->user()->role === 'anggota')
+            <x-layouts.partials.sidebar-item icon="dashboard" label="Dashboard" :href="route('member.dashboard')" :active="request()->routeIs('member.dashboard')" />
+        @else
+            <x-layouts.partials.sidebar-item icon="dashboard" label="Dashboard" :href="route('dashboard')" :active="request()->routeIs('dashboard')" />
+        @endif
 
         <div class="px-8 mt-8 mb-3 flex items-center gap-2">
             <span class="text-[10px] font-bold uppercase tracking-widest text-coffee/50 font-serif">I. Katalog</span>
@@ -19,13 +24,26 @@
 
         <x-layouts.partials.sidebar-item icon="book" label="Buku" :href="route('books.index')" :active="request()->routeIs('books.*')" />
 
-        <div class="px-8 mt-8 mb-3 flex items-center gap-2">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-coffee/50 font-serif">II. Manajemen</span>
-            <div class="h-px flex-1 bg-ink/5"></div>
-        </div>
+        {{-- Management Section (hanya untuk Admin & Petugas) --}}
+        @if(auth()->user()->role !== 'anggota')
+            <div class="px-8 mt-8 mb-3 flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-coffee/50 font-serif">II. Manajemen</span>
+                <div class="h-px flex-1 bg-ink/5"></div>
+            </div>
 
-        <x-layouts.partials.sidebar-item icon="users" label="Data Pengguna" :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')" />
-        <x-layouts.partials.sidebar-item icon="transaction" label="Data Transaksi" :href="route('admin.transaksi.index')" :active="request()->routeIs('admin.transaksi.*')" />
+            <x-layouts.partials.sidebar-item icon="users" label="Data Pengguna" :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')" />
+            <x-layouts.partials.sidebar-item icon="transaction" label="Data Transaksi" :href="route('admin.transaksi.index')" :active="request()->routeIs('admin.transaksi.*')" />
+        @endif
+
+        {{-- Member Transaksi (hanya untuk Anggota) --}}
+        @if(auth()->user()->role === 'anggota')
+            <div class="px-8 mt-8 mb-3 flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-coffee/50 font-serif">II. Peminjaman</span>
+                <div class="h-px flex-1 bg-ink/5"></div>
+            </div>
+
+            <x-layouts.partials.sidebar-item icon="history" label="Riwayat Peminjaman" :href="route('member.transaksi')" :active="request()->routeIs('member.transaksi')" />
+        @endif
     </nav>
 
     <div class="flex-shrink-0 p-6 border-t border-ink bg-[#f9f7f1]">
@@ -35,7 +53,7 @@
             <span>Profil Pengguna</span>
         </a>
 
-        <form method="POST" action="#" class="w-full mt-1">
+        <form method="POST" action="{{ route('logout') }}" class="w-full mt-1">
             @csrf
             <button type="submit"
                 class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-serif text-coffee/80 hover:text-red-800 transition-colors group">

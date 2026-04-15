@@ -18,6 +18,8 @@
             <x-lucide-users-round class="w-5 h-5 stroke-[1.5]" />
         @elseif($icon === 'transaction')
             <x-lucide-repeat class="w-5 h-5 stroke-[1.5]" />
+        @elseif($icon === 'history')
+            <x-lucide-history class="w-5 h-5 stroke-[1.5]" />
         @else
             <x-lucide-circle-slash class="w-5 h-5 stroke-[1.5]" />
         @endif

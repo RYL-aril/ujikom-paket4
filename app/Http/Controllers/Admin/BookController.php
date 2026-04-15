@@ -1,0 +1,149 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\BookStoreRequest;
+use App\Models\Book;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+
+class BookController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request): View
+    {
+        $query = Book::query();
+
+        // Search
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('availability_status', $request->status);
+        }
+
+        // Only show public books by default
+        $query->publik();
+
+        $books = $query->orderBy('created_at', 'desc')->paginate(12)->withQueryString();
+
+        return view('pages.books.index', compact('books'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(): View
+    {
+        return view('pages.books.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(BookStoreRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        // Handle cover image upload
+        if ($request->hasFile('cover_image')) {
+            $validated['cover_image'] = $request->file('cover_image')
+                ->store('books/covers', 'public');
+        }
+
+        // Auto-calculate stock
+        $validated['stock_available'] = $validated['stock_total'] ?? 1;
+
+        // Create book
+        Book::create($validated);
+
+        return redirect()->route('books.index')
+            ->with('success', 'Buku berhasil ditambahkan ke katalog.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Book $book): View
+    {
+        return view('pages.books.show', compact('book'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Book $book): View
+    {
+        return view('pages.books.edit', compact('book'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(BookStoreRequest $request, Book $book): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        // Handle cover image upload
+        if ($request->hasFile('cover_image')) {
+            // Delete old cover if exists
+            if ($book->cover_image && Storage::disk('public')->exists($book->cover_image)) {
+                Storage::disk('public')->delete($book->cover_image);
+            }
+            $validated['cover_image'] = $request->file('cover_image')
+                ->store('books/covers', 'public');
+        }
+
+        // Update stock logic
+        if (isset($validated['stock_total'])) {
+            $oldTotal = $book->stock_total;
+            $newTotal = $validated['stock_total'];
+            $diff = $newTotal - $oldTotal;
+            $validated['stock_available'] = max(0, $book->stock_available + $diff);
+        }
+
+        $book->update($validated);
+
+        return redirect()->route('books.index')
+            ->with('success', 'Data buku berhasil diperbarui.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Book $book): RedirectResponse
+    {
+        // Delete cover image if exists
+        if ($book->cover_image && Storage::disk('public')->exists($book->cover_image)) {
+            Storage::disk('public')->delete($book->cover_image);
+        }
+
+        $book->delete();
+
+        return redirect()->route('books.index')
+            ->with('success', 'Buku berhasil dihapus dari katalog.');
+    }
+
+    /**
+     * Toggle public visibility.
+     */
+    public function toggleVisibility(Book $book): RedirectResponse
+    {
+        $book->update(['is_public' => !$book->is_public]);
+
+        return redirect()->back()
+            ->with('success', 'Visibilitas buku diperbarui.');
+    }
+}

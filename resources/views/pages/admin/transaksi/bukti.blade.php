@@ -14,20 +14,20 @@
                 {{-- Kode Verifikasi --}}
                 <div class="bg-background border border-ink p-5 text-center">
                     <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-coffee mb-2">Kode Booking</p>
-                    <p class="text-2xl md:text-3xl font-mono font-bold text-ink tracking-[0.15em]">SCR-8F3A92X</p>
+                    <p class="text-2xl md:text-3xl font-mono font-bold text-ink tracking-[0.15em]">{{ $transaksi->booking_code }}</p>
                 </div>
 
                 {{-- Info Buku & Peminjam --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="border border-ink p-4">
                         <p class="font-mono text-[10px] uppercase tracking-wider text-muted mb-1">Judul Buku</p>
-                        <p class="font-serif text-ink font-semibold text-base">Filosofi Teras</p>
-                        <p class="font-mono text-xs text-coffee mt-1">ID: BK-0892 | Penulis: Henry Manampiring</p>
+                        <p class="font-serif text-ink font-semibold text-base">{{ $transaksi->book->title }}</p>
+                        <p class="font-mono text-xs text-coffee mt-1">{{ $transaksi->book->formatted_id }} | Penulis: {{ $transaksi->book->author }}</p>
                     </div>
                     <div class="border border-ink p-4">
                         <p class="font-mono text-[10px] uppercase tracking-wider text-muted mb-1">Peminjam</p>
-                        <p class="font-serif text-ink font-semibold text-base">Alya Rahmawati</p>
-                        <p class="font-mono text-xs text-coffee mt-1">ID: USR-001 | Mahasiswa</p>
+                        <p class="font-serif text-ink font-semibold text-base">{{ $transaksi->user->name }}</p>
+                        <p class="font-mono text-xs text-coffee mt-1">{{ $transaksi->user->formatted_id }} | {{ ucfirst($transaksi->user->role) }}</p>
                     </div>
                 </div>
 
@@ -35,21 +35,27 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="border border-ink p-4">
                         <p class="font-mono text-[10px] uppercase tracking-wider text-muted mb-1">Waktu Pengajuan</p>
-                        <p class="font-serif text-ink">07 Juni 2024, 09:30 WIB</p>
+                        <p class="font-serif text-ink">{{ $transaksi->created_at->format('d M Y, H:i') }} WIB</p>
                     </div>
                     <div class="border border-ink p-4">
                         <p class="font-mono text-[10px] uppercase tracking-wider text-muted mb-1">Batas Pengambilan</p>
-                        <p class="font-serif text-red-700 font-semibold">08 Juni 2024, 09:30 WIB</p>
+                        <p class="font-serif {{ $transaksi->pickup_deadline && now()->gt($transaksi->pickup_deadline) ? 'text-red-700' : 'text-ink' }} font-semibold">{{ $transaksi->pickup_deadline?->format('d M Y, H:i') }} WIB</p>
                         <p class="font-mono text-[10px] text-muted mt-1">Maksimal 24 Jam</p>
                     </div>
                 </div>
 
                 {{-- Status --}}
                 <div class="border border-ink p-3 bg-background flex items-center justify-center gap-2">
-                    <x-lucide-clock class="w-4 h-4 text-coffee" />
+                    @if ($transaksi->status === 'pending')
+                        <x-lucide-clock class="w-4 h-4 text-coffee" />
+                    @elseif ($transaksi->status === 'expired')
+                        <x-lucide-x-circle class="w-4 h-4 text-red-700" />
+                    @else
+                        <x-lucide-check-circle class="w-4 h-4 text-green-700" />
+                    @endif
                     <span
-                        class="px-2 py-0.5 text-xs font-mono border border-ink bg-surface text-coffee uppercase tracking-wider rounded">
-                        Menunggu
+                        class="px-2 py-0.5 text-xs font-mono border border-ink bg-surface {{ $transaksi->status_badge['text'] }} {{ $transaksi->status_badge['bg'] }} uppercase tracking-wider rounded">
+                        {{ $transaksi->status_badge['label'] }}
                     </span>
                 </div>
             </div>
@@ -60,19 +66,29 @@
                     <p class="font-serif text-sm text-muted leading-relaxed">
                         <span class="text-ink font-semibold">Langkah Selanjutnya:</span>
                         Tunjukkan kode di atas ke petugas perpustakaan dalam waktu <span
-                            class="text-ink font-semibold">24 jam</span>.
-                        Petugas akan memverifikasi data secara fisik dan menyerahkan buku. Kode akan otomatis hangus
-                        jika melebihi batas waktu.
+                            class="text-ink font-semibold">24 jam</span>
+                        @if ($transaksi->status === 'pending')
+                            . Petugas akan memverifikasi data secara fisik dan menyerahkan buku. Kode akan otomatis hangus jika melebihi batas waktu.
+                        @elseif ($transaksi->status === 'expired')
+                            . Sayangnya, batas waktu pengambilan Anda telah lewat. Silahkan buat pengajuan peminjaman baru.
+                        @elseif ($transaksi->status === 'dipinjam')
+                            . Buku sudah Anda terima. Harap kembalikan sebelum jatuh tempo: <span class="font-semibold">{{ $transaksi->due_date?->format('d M Y') }}</span>
+                        @elseif ($transaksi->status === 'dikembalikan')
+                            . Buku sudah dikembalikan. Terima kasih telah menggunakan layanan kami!
+                        @else
+                            . Pengajuan Anda telah ditolak. Silahkan coba lagi dengan data yang berbeda.
+                        @endif
                     </p>
                 </div>
                 <div class="flex flex-col sm:flex-row justify-center gap-3">
                     <button
+                        onclick="window.print()"
                         class="w-full sm:w-auto px-5 py-2.5 border border-ink bg-surface text-sm font-serif text-coffee hover:text-ink hover:bg-background transition-colors rounded flex items-center justify-center gap-2">
                         <x-lucide-printer class="w-4 h-4" /> Cetak / Simpan
                     </button>
-                    <a href="{{ route('books.index') }}"
+                    <a href="{{ route('admin.transaksi.index') }}"
                         class="w-full sm:w-auto px-5 py-2.5 bg-ink text-surface border border-ink text-sm font-serif hover:bg-ink/90 transition-colors rounded flex items-center justify-center gap-2">
-                        <x-lucide-arrow-left class="w-4 h-4" /> Kembali ke Katalog
+                        <x-lucide-arrow-left class="w-4 h-4" /> Kembali
                     </a>
                 </div>
             </div>

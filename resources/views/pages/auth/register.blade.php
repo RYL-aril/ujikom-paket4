@@ -59,19 +59,6 @@
                     class="w-full px-4 py-2.5 bg-background border border-ink text-sm font-serif text-ink placeholder:text-muted/50 focus:outline-none focus:ring-1 focus:ring-ink transition-all">
             </div>
 
-            <div>
-                <label for="role" class="block font-mono text-xs uppercase tracking-wider text-coffee mb-2">
-                    Tipe Akun
-                </label>
-                <select id="role" name="role"
-                    class="w-full px-4 py-2.5 bg-background border border-ink text-sm font-serif text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all">
-                    <option value="anggota">Anggota Perpustakaan</option>
-                    <option value="petugas">Petugas / Staff</option>
-                    {{-- Admin hanya bisa dibuat via seed/admin panel --}}
-                </select>
-                <p class="font-mono text-[10px] text-muted mt-1">* Akun Admin hanya dapat dibuat oleh kurator utama</p>
-            </div>
-
             <button type="submit"
                 class="w-full px-4 py-2.5 bg-ink text-surface border border-ink text-sm font-serif font-semibold hover:bg-ink/90 transition-all rounded-md flex items-center justify-center gap-2 mt-2">
                 <x-lucide-user-plus class="w-4 h-4" /> Daftar Akun

@@ -145,6 +145,15 @@ class User extends Authenticatable
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=8B7355&color=fff';
     }
 
+    // ── Relationships ───────────────────────────────
+    /**
+     * Get user's transactions
+     */
+    public function transaksis()
+    {
+        return $this->hasMany(Transaksi::class);
+    }
+
     /**
      * Check if user is admin
      */

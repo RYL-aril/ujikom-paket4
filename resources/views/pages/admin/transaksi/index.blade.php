@@ -15,28 +15,29 @@
         </div>
 
         {{-- 2. FILTER & PENCARIAN --}}
-        <div class="bg-surface border border-ink p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <form method="GET" action="{{ route('admin.transaksi.index') }}" class="bg-surface border border-ink p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
             <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                 <div class="relative flex-1 sm:w-64">
                     <x-lucide-search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-coffee/60" />
-                    <input type="text" placeholder="Cari ID, nama, atau judul..."
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ID, nama, atau judul..."
                         class="w-full pl-9 pr-4 py-2 bg-background border border-ink text-sm font-serif text-ink placeholder:text-muted/60 focus:outline-none focus:ring-1 focus:ring-ink rounded-md">
                 </div>
-                <select
-                    class="px-3 py-2 bg-background border border-ink text-sm font-serif text-coffee focus:outline-none focus:ring-1 focus:ring-ink rounded-md">
+                <select name="status" class="px-3 py-2 bg-background border border-ink text-sm font-serif text-coffee focus:outline-none focus:ring-1 focus:ring-ink rounded-md" onchange="this.form.submit()">
                     <option value="">Semua Status</option>
-                    <option value="pending">Menunggu</option>
-                    <option value="dipinjam">Dipinjam</option>
-                    <option value="dikembalikan">Dikembalikan</option>
-                    <option value="terlambat">Terlambat</option>
-                    <option value="ditolak">Ditolak</option>
+                    <option value="pending" @selected(request('status') === 'pending')>Menunggu</option>
+                    <option value="dipinjam" @selected(request('status') === 'dipinjam')>Dipinjam</option>
+                    <option value="dikembalikan" @selected(request('status') === 'dikembalikan')>Dikembalikan</option>
+                    <option value="terlambat" @selected(request('status') === 'terlambat')>Terlambat</option>
+                    <option value="ditolak" @selected(request('status') === 'ditolak')>Ditolak</option>
+                    <option value="expired" @selected(request('status') === 'expired')>Hangus</option>
                 </select>
+                <button type="submit" class="px-4 py-2 border border-ink bg-ink text-surface text-sm font-serif hover:bg-ink/90 rounded-md">Cari</button>
             </div>
-            <button
+            <a href="{{ route('admin.transaksi.export') }}"
                 class="px-4 py-2 border border-ink bg-surface text-sm font-serif text-coffee hover:text-ink hover:bg-ink/5 transition-all rounded-md flex items-center gap-2 w-max">
-                <x-lucide-download class="w-4 h-4" /> Ekspor Data
-            </button>
-        </div>
+                <x-lucide-download class="w-4 h-4" /> Ekspor CSV
+            </a>
+        </form>
 
         {{-- 3. TABEL TRANSAKSI --}}
         <div class="bg-surface border border-ink overflow-x-auto">
@@ -59,73 +60,91 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-ink">
-                    @forelse ($transaksi as $txn)
+                    @forelse($transaksi as $txn)
                         <tr class="hover:bg-ink/5 transition-colors">
-                            <td class="px-6 py-4 font-mono text-coffee">{{ $txn->id }}</td>
-                            <td class="px-6 py-4 font-serif text-ink">{{ $txn->user->name }}</td>
+                            <td class="px-6 py-4 font-mono text-coffee">{{ $txn->formatted_id }}</td>
+                            <td class="px-6 py-4 font-serif text-ink">
+                                {{ $txn->user->name }}
+                                @if ($txn->booking_code && $txn->status === 'pending')
+                                    <p class="font-mono text-[10px] text-coffee mt-1">{{ $txn->booking_code }}</p>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 font-serif text-muted">{{ $txn->book->title }}</td>
-                            <td class="px-6 py-4 text-center font-mono text-muted">{{ $txn->borrowed_date->format('d M Y') }}</td>
-                            <td class="px-6 py-4 text-center font-mono text-muted">{{ $txn->due_date->format('d M Y') }}</td>
+                            <td class="px-6 py-4 text-center font-mono text-muted">
+                                {{ $txn->borrowed_date?->format('d M Y') ?? '-' }}</td>
+                            <td
+                                class="px-6 py-4 text-center font-mono text-muted {{ $txn->is_overdue ? 'text-red-700 font-semibold' : '' }}">
+                                {{ $txn->due_date?->format('d M Y') ?? '-' }}
+                            </td>
                             <td class="px-6 py-4 text-center">
-                                @php
-                                    $badge = match ($txn->status) {
-                                        'pending' => [
-                                            'text' => 'text-coffee',
-                                            'bg' => 'bg-surface',
-                                            'label' => 'Menunggu',
-                                        ],
-                                        'dipinjam' => ['text' => 'text-ink', 'bg' => 'bg-ink/5', 'label' => 'Dipinjam'],
-                                        'dikembalikan' => [
-                                            'text' => 'text-coffee',
-                                            'bg' => 'bg-surface',
-                                            'label' => 'Dikembalikan',
-                                        ],
-                                        'terlambat' => [
-                                            'text' => 'text-red-700',
-                                            'bg' => 'bg-surface',
-                                            'label' => 'Terlambat',
-                                        ],
-                                        'ditolak' => [
-                                            'text' => 'text-muted',
-                                            'bg' => 'bg-surface',
-                                            'label' => 'Ditolak',
-                                        ],
-                                        default => [
-                                            'text' => 'text-muted',
-                                            'bg' => 'bg-surface',
-                                            'label' => $txn->status,
-                                        ],
-                                    };
-                                @endphp
+                                @php $badge = $txn->status_badge; @endphp
                                 <span
                                     class="px-2 py-0.5 text-xs font-mono border border-ink rounded uppercase tracking-wider {{ $badge['text'] }} {{ $badge['bg'] }}">
                                     {{ $badge['label'] }}
                                 </span>
+                                @if ($txn->fine_amount > 0 && !$txn->fine_paid)
+                                    <p class="font-mono text-[10px] text-red-700 mt-1">Denda: Rp
+                                        {{ number_format($txn->fine_amount) }}</p>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     @if ($txn->status === 'pending')
-                                        <button
-                                            class="px-3 py-1.5 border border-ink bg-ink/5 text-xs font-serif text-ink hover:bg-ink hover:text-surface transition-colors rounded">
-                                            Setujui
-                                        </button>
-                                        <button
+                                        <form method="POST" action="{{ route('admin.transaksi.approve', $txn) }}"
+                                            class="inline">
+                                            @csrf @method('PATCH')
+                                            <button type="submit"
+                                                class="px-3 py-1.5 border border-ink bg-ink/5 text-xs font-serif text-ink hover:bg-ink hover:text-surface transition-colors rounded"
+                                                onclick="return confirm('Setujui peminjaman ini?')">
+                                                Setujui
+                                            </button>
+                                        </form>
+                                        <button type="button"
+                                            onclick="document.getElementById('reject-{{ $txn->id }}').classList.remove('hidden')"
                                             class="px-3 py-1.5 border border-ink text-xs font-serif text-coffee hover:bg-background hover:text-red-800 hover:border-red-800 transition-colors rounded">
                                             Tolak
                                         </button>
+                                        {{-- Reject Modal Inline --}}
+                                        <div id="reject-{{ $txn->id }}"
+                                            class="hidden absolute right-0 mt-2 w-64 bg-surface border border-ink p-3 z-10">
+                                            <form method="POST" action="{{ route('admin.transaksi.reject', $txn) }}">
+                                                @csrf @method('PATCH')
+                                                <label class="block font-mono text-[10px] text-coffee mb-1">Alasan
+                                                    Penolakan</label>
+                                                <textarea name="reason" rows="2" required
+                                                    class="w-full px-2 py-1 bg-background border border-ink text-xs font-serif mb-2"></textarea>
+                                                <div class="flex gap-2">
+                                                    <button type="button"
+                                                        onclick="document.getElementById('reject-{{ $txn->id }}').classList.add('hidden')"
+                                                        class="flex-1 px-2 py-1 border border-ink text-xs rounded">Batal</button>
+                                                    <button type="submit"
+                                                        class="flex-1 px-2 py-1 bg-red-700 text-surface border border-red-700 text-xs rounded">Konfirmasi</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     @elseif($txn->status === 'dipinjam')
-                                        <button
-                                            class="px-3 py-1.5 border border-ink text-xs font-serif text-coffee hover:text-ink hover:bg-ink/5 transition-colors rounded">
-                                            Kembalikan
-                                        </button>
+                                        <form method="POST" action="{{ route('admin.transaksi.return', $txn) }}"
+                                            class="inline">
+                                            @csrf @method('PATCH')
+                                            <button type="submit"
+                                                class="px-3 py-1.5 border border-ink text-xs font-serif text-coffee hover:text-ink hover:bg-ink/5 transition-colors rounded"
+                                                onclick="return confirm('Konfirmasi pengembalian buku?')">
+                                                Kembalikan
+                                            </button>
+                                        </form>
                                     @elseif($txn->status === 'terlambat')
-                                        <button
-                                            class="px-3 py-1.5 border border-ink bg-ink/5 text-xs font-serif text-ink hover:bg-ink hover:text-surface transition-colors rounded">
-                                            Proses Denda
-                                        </button>
+                                        <form method="POST" action="{{ route('admin.transaksi.return', $txn) }}"
+                                            class="inline">
+                                            @csrf @method('PATCH')
+                                            <button type="submit"
+                                                class="px-3 py-1.5 border border-ink bg-ink/5 text-xs font-serif text-ink hover:bg-ink hover:text-surface transition-colors rounded">
+                                                Proses Denda
+                                            </button>
+                                        </form>
                                     @endif
-                                    <a href="{{ route('admin.transaksi.show', $txn->id) }}"
-                                        class="p-1.5 border border-ink rounded hover:bg-ink/5 transition-colors group">
+                                    <a href="{{ route('admin.transaksi.show', $txn) }}"
+                                        class="p-1.5 border border-ink rounded hover:bg-ink/5 transition-colors group"
+                                        title="Detail">
                                         <x-lucide-eye class="w-4 h-4 text-coffee/70 group-hover:text-ink" />
                                     </a>
                                 </div>
@@ -133,8 +152,12 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-8 text-center text-muted font-serif">
-                                Belum ada transaksi terdaftar.
+                            <td colspan="7"
+                                class="px-6 py-12 text-center text-muted font-serif border border-ink bg-surface">
+                                <x-lucide-receipt class="w-10 h-10 mx-auto mb-3 opacity-40" />
+                                <p>Belum ada transaksi terdaftar.</p>
+                                <a href="{{ route('admin.transaksi.create') }}"
+                                    class="text-coffee hover:text-ink mt-2 inline-block">Buat peminjaman pertama →</a>
                             </td>
                         </tr>
                     @endforelse
@@ -142,24 +165,43 @@
             </table>
         </div>
 
-        {{-- 4. PAGINATION --}}
+        {{-- Pagination --}}
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border border-ink bg-surface p-4">
-            <span class="text-xs font-mono text-muted">Menampilkan halaman 1 dari 24</span>
+            <span class="text-xs font-mono text-muted">
+                Menampilkan {{ $transaksi->firstItem() ?? 0 }} - {{ $transaksi->lastItem() ?? 0 }} dari
+                {{ $transaksi->total() }} transaksi
+            </span>
             <nav class="flex items-center gap-2">
-                <button
-                    class="px-3 py-1.5 border border-ink text-xs font-mono text-muted hover:bg-ink/5 hover:text-ink transition-colors rounded disabled:opacity-50"
-                    disabled>← Prev</button>
-                <button class="px-3 py-1.5 border border-ink bg-ink text-surface text-xs font-mono rounded">1</button>
-                <button
-                    class="px-3 py-1.5 border border-ink text-xs font-mono text-coffee hover:bg-ink/5 hover:text-ink transition-colors rounded">2</button>
-                <button
-                    class="px-3 py-1.5 border border-ink text-xs font-mono text-coffee hover:bg-ink/5 hover:text-ink transition-colors rounded">3</button>
-                <span class="text-muted">...</span>
-                <button
-                    class="px-3 py-1.5 border border-ink text-xs font-mono text-coffee hover:bg-ink/5 hover:text-ink transition-colors rounded">24</button>
-                <button
-                    class="px-3 py-1.5 border border-ink text-xs font-mono text-coffee hover:bg-ink/5 hover:text-ink transition-colors rounded">Next
-                    →</button>
+                {{-- Previous --}}
+                @if ($transaksi->onFirstPage())
+                    <span
+                        class="px-3 py-1.5 border border-ink text-xs font-mono text-muted rounded opacity-50 cursor-not-allowed">←
+                        Prev</span>
+                @else
+                    <a href="{{ $transaksi->previousPageUrl() }}"
+                        class="px-3 py-1.5 border border-ink text-xs font-mono text-coffee hover:bg-ink/5 hover:text-ink transition-colors rounded">←
+                        Prev</a>
+                @endif
+                {{-- Page Numbers --}}
+                @foreach ($transaksi->getUrlRange(1, $transaksi->lastPage()) as $page => $url)
+                    @if ($page == $transaksi->currentPage())
+                        <span
+                            class="px-3 py-1.5 border border-ink bg-ink text-surface text-xs font-mono rounded">{{ $page }}</span>
+                    @elseif ($page >= $transaksi->currentPage() - 2 && $page <= $transaksi->currentPage() + 2)
+                        <a href="{{ $url }}"
+                            class="px-3 py-1.5 border border-ink text-xs font-mono text-coffee hover:bg-ink/5 hover:text-ink transition-colors rounded">{{ $page }}</a>
+                    @endif
+                @endforeach
+                {{-- Next --}}
+                @if ($transaksi->hasMorePages())
+                    <a href="{{ $transaksi->nextPageUrl() }}"
+                        class="px-3 py-1.5 border border-ink text-xs font-mono text-coffee hover:bg-ink/5 hover:text-ink transition-colors rounded">Next
+                        →</a>
+                @else
+                    <span
+                        class="px-3 py-1.5 border border-ink text-xs font-mono text-muted rounded opacity-50 cursor-not-allowed">Next
+                        →</span>
+                @endif
             </nav>
         </div>
 
