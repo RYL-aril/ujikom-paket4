@@ -13,9 +13,10 @@ return [
     | framework. This connection is utilized if another isn't explicitly
     | specified when running a cache operation inside the application.
     |
+    | ✅ PRODUCTION: Gunakan 'file' (untuk shared hosting) atau 'redis'
     */
 
-    'default' => env('CACHE_STORE', 'database'),
+    'default' => env('CACHE_STORE', 'file'),  // ✅ Changed from 'database' to 'file'
 
     /*
     |--------------------------------------------------------------------------

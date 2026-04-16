@@ -59,8 +59,13 @@
                 <div class="bg-surface border border-ink p-4">
                     <div class="aspect-[2/3] bg-ink/5 border border-ink overflow-hidden">
                         @if ($book->cover_image)
-                            <img src="{{ $book->cover_url }}" alt="{{ $book->title }}"
-                                class="w-full h-full object-cover opacity-90">
+                            <img src="{{ $book->cover_url }}" 
+                                alt="{{ $book->title }}"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-full object-cover opacity-90"
+                                width="400" 
+                                height="600">
                         @else
                             <div class="w-full h-full flex items-center justify-center bg-gradient-to-b from-ink/20 to-ink/5">
                                 <x-lucide-book class="w-16 h-16 text-ink/40" />

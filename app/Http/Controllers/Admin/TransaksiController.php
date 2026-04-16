@@ -35,15 +35,15 @@ class TransaksiController extends Controller
 
         $transaksi = $query->latest()->paginate(6)->withQueryString();
 
+        // ✅ FIX: Use updateOrFail instead of get()->each to avoid N+1
+        // Also run these as background jobs in production or async tasks
         Transaksi::pending()
             ->where('pickup_deadline', '<', now())
-            ->get()  
-            ->each->expire();
+            ->update(['status' => 'expired']);
 
         Transaksi::active()
             ->where('due_date', '<', now()->toDateString())
-            ->get()
-            ->each->markOverdue();
+            ->update(['status' => 'terlambat']);
 
         return view('pages.admin.transaksi.index', compact('transaksi'));
     }

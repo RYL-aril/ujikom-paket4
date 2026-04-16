@@ -46,7 +46,9 @@ class Book extends Model
     public function getCoverUrlAttribute(): string
     {
         if (!$this->cover_image) {
-            return 'https://picsum.photos/seed/book-' . $this->id . '/400/600';
+            // ✅ Use local SVG placeholder instead of external API
+            // This can be cached indefinitely
+            return asset('images/book-placeholder.svg');
         }
 
         // Handle public/images_covers directory
@@ -54,7 +56,7 @@ class Book extends Model
             return asset($this->cover_image);
         }
 
-        // Handle storage link (books/covers/)
+        // Handle storage link (books/covers/) - add cache buster if needed
         return asset('storage/' . $this->cover_image);
     }
 

@@ -27,4 +27,5 @@ Route::prefix('books')->name('books.')->group(function () {
 
 
 Route::get('/transaksi-bukti/{bookingCode}', [TransaksiController::class, 'receipt'])
+    ->middleware('auth')
     ->name('transaksi.receipt');

@@ -68,8 +68,18 @@ class TransaksiController extends Controller
             return redirect()
                 ->route('anggota.transaksi')
                 ->with('success', 'Permintaan peminjaman berhasil dibuat. Tunggu persetujuan dari petugas.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            \Log::error('Transaksi creation failed', [
+                'user_id' => $request->user()->id,
+                'book_id' => $book->id,
+                'error' => $e->getMessage()
+            ]);
+            return redirect()->back()
+                ->with('error', 'Gagal membuat permintaan. Hubungi administrator.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal membuat permintaan: ' . $e->getMessage());
+            \Log::error('Unexpected error in borrow', ['error' => $e]);
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
         }
     }
 

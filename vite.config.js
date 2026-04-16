@@ -10,4 +10,17 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    
+    build: {
+        chunkSizeWarningLimit: 500,
+        minify: 'terser',
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'alpine': ['alpinejs'],
+                    'http': ['axios'],
+                },
+            },
+        },
+    },
 });

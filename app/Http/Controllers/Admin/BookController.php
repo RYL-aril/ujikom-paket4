@@ -37,6 +37,7 @@ class BookController extends Controller
 
         // Only show public books by default
         $query->publik();
+        $query->withoutTrashed();  // ✅ Exclude soft-deleted books
 
         $books = $query->orderBy('created_at', 'desc')->paginate(6)->withQueryString();
 

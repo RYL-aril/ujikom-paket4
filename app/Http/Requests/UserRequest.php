@@ -13,7 +13,7 @@ class UserRequest extends FormRequest
     public function authorize(): bool
     {
         $user = auth()->user();
-        return $user?->isAdmin();
+        return $user && in_array($user->role, ['admin', 'petugas']);
     }
 
     /**

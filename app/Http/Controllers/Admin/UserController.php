@@ -137,6 +137,23 @@ class UserController extends Controller
     }
 
     /**
+     * Show trashed (soft deleted) users.
+     */
+    public function trashed(Request $request)
+    {
+        $query = User::onlyTrashed();
+
+        // Search
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        $users = $query->paginate(5)->withQueryString();
+
+        return view('pages.admin.users.trashed', compact('users'));
+    }
+
+    /**
      * Restore a soft-deleted user (admin only)
      */
     public function restore($id)
@@ -148,19 +165,4 @@ class UserController extends Controller
             ->with('success', "Data anggota '{$user->name}' berhasil dipulihkan.");
     }
 
-    /**
-     * List of trashed (deleted) users - for admin
-     */
-    public function trashed(Request $request)
-    {
-        $query = User::onlyTrashed();
-
-        if ($request->filled('search')) {
-            $query->search($request->search);
-        }
-
-        $users = $query->orderBy('deleted_at', 'desc')->paginate(15)->withQueryString();
-
-        return view('pages.admin.users.trashed', compact('users'));
-    }
 }
