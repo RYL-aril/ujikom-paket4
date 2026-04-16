@@ -1,53 +1,403 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ujikom Paket 4 - Sistem Manajemen Peminjaman Buku
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <strong>Aplikasi web untuk manajemen data buku dan transaksi peminjaman</strong>
 </p>
 
-## About Laravel
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel" alt="Laravel 12">
+  <img src="https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php" alt="PHP 8.2+">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📋 Daftar Isi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Tentang Proyek](#tentang-proyek)
+- [Fitur Utama](#fitur-utama)
+- [Prasyarat Sistem](#prasyarat-sistem)
+- [Instalasi](#instalasi)
+- [Konfigurasi](#konfigurasi)
+- [Database](#database)
+- [Menjalankan Aplikasi](#menjalankan-aplikasi)
+- [Testing](#testing)
+- [Struktur Proyek](#struktur-proyek)
+- [Teknologi yang Digunakan](#teknologi-yang-digunakan)
+- [Kontribusi](#kontribusi)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📚 Tentang Proyek
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Ujikom Paket 4 adalah aplikasi web yang dibangun dengan **Laravel 12** untuk mengelola sistem peminjaman buku. Aplikasi ini dirancang untuk memudahkan perpustakaan atau toko buku dalam mencatat data buku, anggota, dan transaksi peminjaman.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## ✨ Fitur Utama
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- 👥 **Manajemen Pengguna** - Sistem autentikasi dengan role (anggota, petugas)
+- 📖 **Manajemen Buku** - CRUD lengkap untuk data buku dengan cover image
+- 📝 **Transaksi Peminjaman** - Pencatatan transaksi peminjaman dan pengembalian buku
+- 🔐 **Sistem Keamanan** - Middleware dan authorization untuk keamanan data
+- 📱 **UI/UX Modern** - Interface responsif dengan Tailwind CSS dan Alpine.js
+- 🧪 **Testing** - Unit dan feature testing dengan Pest Framework
+- ⚡ **Fast Development** - Vite untuk development server yang cepat
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## 🖥️ Prasyarat Sistem
+
+Sebelum menjalankan proyek, pastikan sistem Anda memiliki:
+
+- **PHP** 8.2 atau lebih tinggi
+- **Composer** (package manager PHP)
+- **Node.js** 18+ dan **npm** atau **yarn**
+- **Database**: MySQL 5.7+ atau MariaDB
+- **Git** (untuk cloning repository)
+- **Laragon** (opsional, untuk local development)
+
+---
+
+## 📦 Instalasi
+
+### 1. Clone Repository
+
+```bash
+git clone <repository-url>
+cd ujikom-paket4
+```
+
+### 2. Install Dependencies PHP
+
+```bash
+composer install
+```
+
+### 3. Install Dependencies JavaScript
+
+```bash
+npm install
+```
+
+### 4. Buat File Environment
+
+```bash
+cp .env.example .env
+```
+
+### 5. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+## ⚙️ Konfigurasi
+
+### Konfigurasi Database
+
+Edit file `.env` dan sesuaikan konfigurasi database:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ujikom_paket4
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### Konfigurasi Aplikasi Lainnya
+
+Sesuaikan konfigurasi lainnya di file `.env` sesuai kebutuhan:
+
+```env
+APP_NAME="Ujikom Paket 4"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
+```
+
+---
+
+## 🗄️ Database
+
+### Membuat Database
+
+```bash
+php artisan migrate
+```
+
+Perintah di atas akan membuat semua tabel yang diperlukan:
+- `users` - Data pengguna
+- `books` - Data buku
+- `transaksis` - Data transaksi peminjaman
+
+### Mengisi Data Dummy (Seeding)
+
+Untuk mengisi database dengan data dummy untuk testing:
+
+```bash
+php artisan db:seed
+```
+
+Ini akan menjalankan seeders untuk:
+- User (anggota dan petugas)
+- Book (data buku)
+- Transaksi (data peminjaman)
+
+---
+
+## 🚀 Menjalankan Aplikasi
+
+### Development Server
+
+Jalankan Vite development server untuk asset compilation:
+
+```bash
+npm run dev
+```
+
+Pada terminal lain, jalankan Laravel development server:
+
+```bash
+php artisan serve
+```
+
+Aplikasi akan berjalan di `http://localhost:8000`
+
+### Production Build
+
+Untuk build production:
+
+```bash
+npm run build
+```
+
+---
+
+## 🧪 Testing
+
+### Menjalankan Semua Tests
+
+```bash
+php artisan test
+```
+
+### Menjalankan Test Spesifik
+
+```bash
+php artisan test tests/Feature/ExampleTest.php
+```
+
+### Dengan Parallel Testing
+
+```bash
+php artisan test --parallel
+```
+
+Proyek menggunakan **Pest Framework** untuk testing yang lebih expressive dan intuitif.
+
+---
+
+## 📁 Struktur Proyek
+
+```
+ujikom-paket4/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/      # Business logic controllers
+│   │   ├── Middleware/       # Custom middleware
+│   │   └── Requests/         # Form request validation
+│   ├── Models/
+│   │   ├── User.php         # Model user
+│   │   ├── Book.php         # Model buku
+│   │   └── Transaksi.php    # Model transaksi
+│   └── Providers/            # Service providers
+├── database/
+│   ├── migrations/           # Database migrations
+│   ├── seeders/             # Database seeders
+│   └── factories/           # Model factories
+├── resources/
+│   ├── views/               # Blade templates
+│   ├── css/                 # Stylesheet
+│   └── js/                  # JavaScript files
+├── routes/
+│   ├── web.php              # Web routes
+│   ├── auth.php             # Auth routes
+│   ├── anggota.php          # Member routes
+│   ├── petugas.php          # Officer routes
+│   └── public.php           # Public routes
+├── tests/                    # Test files
+├── config/                   # Configuration files
+├── storage/                  # Storage files
+├── public/                   # Public assets
+│   └── images_covers/       # Book cover images
+└── vendor/                   # Dependencies
+```
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+
+### Backend
+- **Laravel 12** - PHP web framework
+- **Eloquent ORM** - Database abstraction
+- **Laravel Breeze** - Authentication scaffolding
+- **Pest** - Testing framework
+
+### Frontend
+- **Blade** - Template engine
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **Alpine.js** - Lightweight JavaScript framework
+- **Vite** - Build tool dan dev server
+
+### Database
+- **MySQL/MariaDB** - Relational database
+
+### Tools
+- **Composer** - PHP package manager
+- **npm** - JavaScript package manager
+- **Artisan** - Laravel command-line tool
+- **Laragon** - Local development environment
+
+---
+
+## 📖 Models & Database
+
+### User
+Menyimpan data pengguna dengan role (member/petugas):
+```php
+- id
+- name
+- email
+- password
+- role
+- timestamps
+```
+
+### Book
+Menyimpan data buku:
+```php
+- id
+- title
+- author
+- isbn
+- publisher
+- year
+- cover_image
+- total_copies
+- available_copies
+- timestamps
+```
+
+### Transaksi
+Merekam transaksi peminjaman dan pengembalian:
+```php
+- id
+- user_id
+- book_id
+- borrow_date
+- return_date
+- due_date
+- status
+- timestamps
+```
+
+---
+
+## 🔗 Routes
+
+### Public Routes
+- `GET /` - Halaman home
+- `GET /books` - Daftar buku
+
+### Auth Routes
+- `POST /login` - Login
+- `POST /register` - Register
+- `POST /logout` - Logout
+
+### Member Routes (anggota.php)
+- `GET /dashboard` - Dashboard anggota
+- `GET /borrows` - Riwayat peminjaman
+
+### Officer Routes (petugas.php)
+- `GET /dashboard` - Dashboard petugas
+- `GET /books` - Manajemen buku
+- `POST /books` - Tambah buku
+- `GET /transaksis` - Manajemen transaksi
+
+---
+
+## 💡 Tips Development
+
+### Artisan Commands yang Berguna
+
+```bash
+# Membuat migration baru
+php artisan make:migration create_table_name
+
+# Membuat model dengan factory dan migration
+php artisan make:model ModelName -mf
+
+# Membuat controller
+php artisan make:controller ControllerName
+
+# List semua routes
+php artisan route:list
+
+# Optimize untuk production
+php artisan optimize
+
+# Clear cache
+php artisan cache:clear
+php artisan config:clear
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Permission Denied pada storage/logs
+```bash
+chmod -R 775 storage/
+chmod -R 775 bootstrap/cache/
+```
+
+### Database connection error
+- Pastikan MySQL running
+- Cek konfigurasi `.env`
+- Jalankan `php artisan migrate`
+
+### Node modules tidak terinstall
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+---
+
+## 📝 Lisensi
+
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+
+---
+
+## 👤 Autor
+
+Dibuat untuk ujikom paket 4
+
+---
+
+## 📞 Dukungan
+
+Jika menemukan issue atau bug, silakan buka [issue](../../issues) di repository ini.
+
+---
+
+**Happy Coding! 🚀****
 
 ## Contributing
 
