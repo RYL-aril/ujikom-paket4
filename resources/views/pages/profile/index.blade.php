@@ -109,74 +109,7 @@
                 <div class="space-y-5">
                     <h2
                         class="text-lg font-serif font-semibold text-ink border-b border-ink pb-2 flex items-center gap-2">
-                        <x-lucide-palette class="w-4 h-4 text-coffee" /> II. Preferensi Tampilan
-                    </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="locale"
-                                class="block font-mono text-xs uppercase tracking-wider text-coffee mb-2">Bahasa
-                                Antarmuka</label>
-                            <select id="locale" name="locale"
-                                class="w-full px-4 py-2.5 bg-background border border-ink text-sm font-serif text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all">
-                                <option value="id"
-                                    {{ session('locale', app()->getLocale()) === 'id' ? 'selected' : '' }}>Bahasa
-                                    Indonesia</option>
-                                <option value="en"
-                                    {{ session('locale', app()->getLocale()) === 'en' ? 'selected' : '' }}>English
-                                </option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="timezone"
-                                class="block font-mono text-xs uppercase tracking-wider text-coffee mb-2">Zona
-                                Waktu</label>
-                            <select id="timezone" name="timezone"
-                                class="w-full px-4 py-2.5 bg-background border border-ink text-sm font-serif text-ink focus:outline-none focus:ring-1 focus:ring-ink transition-all">
-                                <option value="Asia/Jakarta"
-                                    {{ session('timezone', 'Asia/Jakarta') === 'Asia/Jakarta' ? 'selected' : '' }}>WIB
-                                    (UTC+7)</option>
-                                <option value="Asia/Makassar"
-                                    {{ session('timezone') === 'Asia/Makassar' ? 'selected' : '' }}>WITA (UTC+8)
-                                </option>
-                                <option value="Asia/Jayapura"
-                                    {{ session('timezone') === 'Asia/Jayapura' ? 'selected' : '' }}>WIT (UTC+9)
-                                </option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block font-mono text-xs uppercase tracking-wider text-coffee mb-2">Notifikasi
-                                Dashboard</label>
-                            <div class="space-y-2">
-                                <label
-                                    class="flex items-center gap-3 p-3 border border-ink rounded hover:bg-ink/5 transition-colors cursor-pointer">
-                                    <input type="checkbox" name="notifications[daily_summary]" value="1" checked
-                                        class="w-4 h-4 border border-ink text-ink focus:ring-ink rounded bg-background">
-                                    <span class="font-serif text-sm text-ink">Tampilkan ringkasan transaksi
-                                        harian</span>
-                                </label>
-                                <label
-                                    class="flex items-center gap-3 p-3 border border-ink rounded hover:bg-ink/5 transition-colors cursor-pointer">
-                                    <input type="checkbox" name="notifications[pending_approval]" value="1" checked
-                                        class="w-4 h-4 border border-ink text-ink focus:ring-ink rounded bg-background">
-                                    <span class="font-serif text-sm text-ink">Notifikasi peminjaman menunggu
-                                        verifikasi</span>
-                                </label>
-                                <label
-                                    class="flex items-center gap-3 p-3 border border-ink rounded hover:bg-ink/5 transition-colors cursor-pointer">
-                                    <input type="checkbox" name="notifications[weekly_report]" value="1"
-                                        class="w-4 h-4 border border-ink text-ink focus:ring-ink rounded bg-background">
-                                    <span class="font-serif text-sm text-ink">Email laporan mingguan (setiap
-                                        Senin)</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-5">
-                    <h2
-                        class="text-lg font-serif font-semibold text-ink border-b border-ink pb-2 flex items-center gap-2">
-                        <x-lucide-shield-check class="w-4 h-4 text-coffee" /> III. Keamanan & Sandi
+                        <x-lucide-shield-check class="w-4 h-4 text-coffee" /> II. Keamanan & Sandi
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -209,29 +142,6 @@
                             <input id="password_confirmation" name="password_confirmation" type="password"
                                 autocomplete="new-password" placeholder="Ulangi sandi baru"
                                 class="w-full px-4 py-2.5 bg-background border border-ink text-sm font-serif text-ink placeholder:text-muted/50 focus:outline-none focus:ring-1 focus:ring-ink transition-all">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block font-mono text-xs uppercase tracking-wider text-coffee mb-2">Sesi
-                                Aktif</label>
-                            <div class="border border-ink p-4 bg-background">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="font-serif text-sm text-ink">Browser
-                                            {{ request()->userAgent() ? 'Terdeteksi' : 'Chrome' }} •
-                                            {{ request()->ip() }}</p>
-                                        <p class="font-mono text-xs text-muted mt-1">Terakhir aktif:
-                                            {{ now()->format('d M Y, H:i') }} WIB</p>
-                                    </div>
-                                    <span
-                                        class="px-2 py-0.5 text-xs font-mono border border-ink rounded text-ink bg-surface">Sesi
-                                        Ini</span>
-                                </div>
-                            </div>
-                            <button type="button"
-                                onclick="confirm('Keluar dari semua sesi lain?') || event.preventDefault()"
-                                class="mt-3 px-4 py-2 border border-ink text-xs font-serif text-coffee hover:text-red-800 hover:border-red-800 transition-colors rounded">
-                                Keluarkan Semua Sesi Lain
-                            </button>
                         </div>
                     </div>
                 </div>

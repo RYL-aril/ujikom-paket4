@@ -81,15 +81,15 @@
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-xs text-muted">Total Stok</span>
-                            <span class="font-serif text-ink font-semibold">{{ $book->stock_total }} eksemplar</span>
+                            <span class="font-serif text-ink font-semibold">{{ $book->stock_total }} Buku</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-xs text-muted">Tersedia</span>
-                            <span class="font-serif text-ink font-semibold">{{ $book->stock_available }} eksemplar</span>
+                            <span class="font-serif text-ink font-semibold">{{ $book->stock_available }} Buku</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-xs text-muted">Sedang Dipinjam</span>
-                            <span class="font-serif text-coffee text-sm">{{ $book->stock_total - $book->stock_available }} eksemplar</span>
+                            <span class="font-serif text-coffee text-sm">{{ $book->stock_total - $book->stock_available }} Buku</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-xs text-muted">Terakhir Update</span>
@@ -171,7 +171,7 @@
                 <div class="bg-surface border border-ink p-5">
                     <h3 class="font-serif font-semibold text-ink mb-3 flex items-center gap-2">
                         <x-lucide-file-text class="w-4 h-4 text-coffee" />
-                        Catatan Kurator
+                        Catatan
                     </h3>
                     <p class="font-serif text-sm text-muted leading-relaxed">
                         {{ $book->curator_notes ?? 'Tidak ada catatan' }}
