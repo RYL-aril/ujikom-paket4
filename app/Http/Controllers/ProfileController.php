@@ -58,7 +58,7 @@ class ProfileController extends Controller
         $user->fill($validated);
         $user->save();
 
-        return Redirect::route('profile')->with('status', 'Profil berhasil diperbarui.');
+        return Redirect::route('profile.edit')->with('status', 'Profil berhasil diperbarui.');
     }
 
     /**

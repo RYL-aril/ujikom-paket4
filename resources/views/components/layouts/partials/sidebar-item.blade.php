@@ -10,16 +10,20 @@
         'text-ink' => $active,
         'text-coffee/40 group-hover:text-ink/60' => !$active,
     ])>
-        @if ($icon === 'dashboard' || $icon === 'chart-bar')
+        @if ($icon === 'dashboard')
             <x-lucide-layout-dashboard class="w-5 h-5 stroke-[1.5]" />
         @elseif($icon === 'book' || $icon === 'book-open')
             <x-lucide-book-open class="w-5 h-5 stroke-[1.5]" />
         @elseif($icon === 'users')
             <x-lucide-users-round class="w-5 h-5 stroke-[1.5]" />
+        @elseif($icon === 'receipt')
+            <x-lucide-receipt-text class="w-5 h-5 stroke-[1.5]" />
         @elseif($icon === 'transaction')
             <x-lucide-repeat class="w-5 h-5 stroke-[1.5]" />
         @elseif($icon === 'history')
             <x-lucide-history class="w-5 h-5 stroke-[1.5]" />
+        @elseif($icon === 'book-marked')
+            <x-lucide-bookmark class="w-5 h-5 stroke-[1.5]" />
         @else
             <x-lucide-circle-slash class="w-5 h-5 stroke-[1.5]" />
         @endif

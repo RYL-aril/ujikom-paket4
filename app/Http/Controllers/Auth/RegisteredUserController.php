@@ -46,6 +46,13 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect based on user role (member by default, should be anggota/member role)
+        $dashboardRoute = match($user->role ?? 'anggota') {
+            'anggota' => route('anggota.dashboard', absolute: false),
+            'admin', 'petugas' => route('admin.dashboard', absolute: false),
+            default => route('anggota.dashboard', absolute: false),
+        };
+
+        return redirect($dashboardRoute);
     }
 }

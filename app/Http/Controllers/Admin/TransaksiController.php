@@ -180,59 +180,6 @@ class TransaksiController extends Controller
         return view('pages.admin.transaksi.bukti', compact('transaksi'));
     }
 
-    /**
-     * Member requesting to borrow a book.
-     */
-    public function borrowRequest(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'book_id' => 'required|exists:books,id',
-            'notes' => 'nullable|string|max:255',
-        ]);
-
-        // Check if user already has a pending request for this book
-        $existingRequest = Transaksi::where('user_id', $request->user()->id)
-            ->where('book_id', $validated['book_id'])
-            ->where('status', 'pending')
-            ->exists();
-
-        if ($existingRequest) {
-            return redirect()->back()->with('error', 'Anda sudah memiliki permintaan peminjaman yang pending untuk buku ini.');
-        }
-
-        try {
-            $transaksi = DB::transaction(function () use ($validated, $request) {
-                return Transaksi::create([
-                    'user_id' => $request->user()->id,
-                    'book_id' => $validated['book_id'],
-                    'status' => 'pending',
-                    'notes' => $validated['notes'] ?? null,
-                ]);
-            });
-
-            return redirect()->back()->with('success', 'Permintaan peminjaman berhasil dikirim! Admin akan memverifikasi dalam waktu singkat.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal membuat permintaan peminjaman. Silakan coba lagi.');
-        }
-    }
-
-    /**
-     * Member viewing their borrowing transactions.
-     */
-    public function memberTransactions(Request $request): View
-    {
-        $query = Transaksi::with(['book'])
-            ->where('user_id', $request->user()->id);
-
-        // Filter by status if provided
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $transaksi = $query->latest()->paginate(10)->withQueryString();
-
-        return view('pages.member.transaksi', compact('transaksi'));
-    }
 
     /**
      * Export transaksis data.

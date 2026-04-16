@@ -13,9 +13,9 @@
                     <p class="text-muted mt-1 font-serif text-sm">Informasi lengkap koleksi dan riwayat peminjaman.</p>
                 </div>
             </div>
-            <div class="flex gap-3">
-                {{-- Admin & Petugas Actions --}}
-                @if(auth()->check() && in_array(auth()->user()->role, ['admin', 'petugas']))
+            <div class="flex gap-2">
+                {{-- Admin Actions --}}
+                @if(auth()->check() && auth()->user()->isAdmin())
                     <a href="{{ route('admin.books.edit', $book) }}"
                         class="px-4 py-2 border border-ink bg-surface text-sm font-serif text-coffee hover:text-ink hover:bg-ink/5 transition-all rounded-md flex items-center gap-2">
                         <x-lucide-pencil class="w-4 h-4" /> Edit
@@ -28,14 +28,24 @@
                             <x-lucide-trash-2 class="w-4 h-4" /> Hapus
                         </button>
                     </form>
-                @endif
-
-                {{-- Member/Anggota Action --}}
-                @if(auth()->check() && auth()->user()->role === 'anggota')
+                @elseif(auth()->check() && auth()->user()->isStaff())
+                    {{-- Petugas: Hanya Edit --}}
+                    <a href="{{ route('admin.books.edit', $book) }}"
+                        class="px-4 py-2 border border-amber-600 bg-amber-50 text-sm font-serif text-amber-700 hover:bg-amber-100 transition-all rounded-md flex items-center gap-2">
+                        <x-lucide-pencil class="w-4 h-4" /> Edit
+                    </a>
+                @elseif(auth()->check() && auth()->user()->isMember())
+                    {{-- Member: Pinjam Button --}}
                     <button onclick="openBorrowModal()"
-                        class="px-4 py-2.5 bg-ink text-surface border border-ink text-sm font-serif hover:bg-ink/90 transition-all rounded-md flex items-center gap-2">
-                        <x-lucide-book-plus class="w-4 h-4" /> Pinjam
+                        class="px-4 py-2.5 bg-blue-600 text-surface border border-blue-600 text-sm font-serif hover:bg-blue-700 transition-all rounded-md flex items-center gap-2">
+                        <x-lucide-book-plus class="w-4 h-4" /> Pinjam Buku
                     </button>
+                @else
+                    {{-- Guest: Login Required --}}
+                    <a href="{{ route('login') }}"
+                        class="px-4 py-2.5 bg-ink text-surface border border-ink text-sm font-serif hover:bg-ink/90 transition-all rounded-md flex items-center gap-2">
+                        <x-lucide-log-in class="w-4 h-4" /> Masuk untuk Meminjam
+                    </a>
                 @endif
             </div>
         </div>
@@ -183,7 +193,7 @@
     </div>
 
     {{-- BORROW REQUEST MODAL (for members) --}}
-    @if(auth()->check() && auth()->user()->role === 'anggota')
+    @if(auth()->check() && auth()->user()->isMember())
         <div id="borrowModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
             <div class="bg-surface border border-ink rounded-lg max-w-md w-full shadow-lg">
                 {{-- Header --}}

@@ -7,11 +7,45 @@
                 <h1 class="text-3xl font-serif font-bold text-ink tracking-tight">Katalog Perpustakaan</h1>
                 <p class="text-muted mt-1 font-serif">Arsip koleksi buku fisik, digital, dan referensi langka.</p>
             </div>
-            {{-- Admin/Petugas Actions --}}
-            @if(auth()->check() && in_array(auth()->user()->role, ['admin', 'petugas']))
-                <a href="{{ route('admin.books.create') }}"
-                    class="px-4 py-2.5 bg-ink text-surface border border-ink text-sm font-serif hover:bg-ink/90 transition-all rounded-md flex items-center gap-2 w-max">
-                    <x-lucide-book-plus class="w-4 h-4" /> Tambah Buku
+            
+            {{-- Role-Based Action Buttons --}}
+            @if(auth()->check())
+                @if(auth()->user()->isAdmin())
+                    {{-- Admin: Tambah Buku + Lihat Dashboard --}}
+                    <div class="flex gap-2 w-max">
+                        <a href="{{ route('admin.books.create') }}"
+                            class="px-4 py-2.5 bg-ink text-surface border border-ink text-sm font-serif hover:bg-ink/90 transition-all rounded-md flex items-center gap-2">
+                            <x-lucide-book-plus class="w-4 h-4" /> Tambah Buku
+                        </a>
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="px-4 py-2.5 border border-ink bg-surface text-sm font-serif text-coffee hover:text-ink hover:bg-ink/5 transition-all rounded-md flex items-center gap-2">
+                            <x-lucide-layout-dashboard class="w-4 h-4" /> Dashboard
+                        </a>
+                    </div>
+                @elseif(auth()->user()->isStaff())
+                    {{-- Petugas: Tambah Buku + Lihat Transaksi --}}
+                    <div class="flex gap-2 w-max">
+                        <a href="{{ route('admin.books.create') }}"
+                            class="px-4 py-2.5 bg-amber-600 text-surface border border-amber-600 text-sm font-serif hover:bg-amber-700 transition-all rounded-md flex items-center gap-2">
+                            <x-lucide-book-plus class="w-4 h-4" /> Tambah Buku
+                        </a>
+                        <a href="{{ route('admin.transaksi.index') }}"
+                            class="px-4 py-2.5 border border-amber-600 bg-amber-50 text-sm font-serif text-amber-700 hover:bg-amber-100 transition-all rounded-md flex items-center gap-2">
+                            <x-lucide-receipt-text class="w-4 h-4" /> Data Transaksi
+                        </a>
+                    </div>
+                @else
+                    {{-- Member: Lihat Transaksi Saya --}}
+                    <a href="{{ route('anggota.transaksi') }}"
+                        class="px-4 py-2.5 border border-blue-600 bg-blue-50 text-sm font-serif text-blue-700 hover:bg-blue-100 transition-all rounded-md flex items-center gap-2 w-max">
+                        <x-lucide-history class="w-4 h-4" /> Transaksi Saya
+                    </a>
+                @endif
+            @else
+                {{-- Guest: Tombol Login --}}
+                <a href="{{ route('login') }}"
+                    class="px-4 py-2.5 bg-ink text-surface border border-ink text-sm font-serif hover:bg-ink/90 transition-all rounded-md flex items-center gap-2">
+                    <x-lucide-log-in class="w-4 h-4" /> Masuk
                 </a>
             @endif
         </div>
@@ -104,7 +138,7 @@
                                 <span class="text-[10px] font-mono text-muted">ID: {{ $book->formatted_id ?? 'BK-' . str_pad($book->id, 4, '0', STR_PAD_LEFT) }}</span>
                                 <div class="flex gap-2">
                                     {{-- View Button (Semua Role) --}}
-                                    <a href="{{ route('admin.books.show', $book) }}"
+                                    <a href="{{ route('books.show', $book) }}"
                                         class="p-1.5 border border-ink rounded hover:bg-ink/5 transition-colors"
                                         title="Lihat Detail">
                                         <x-lucide-eye class="w-3.5 h-3.5 text-coffee/70 hover:text-ink" />

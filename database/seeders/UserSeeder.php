@@ -23,6 +23,15 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'name' => 'Eserel',
+            'email' => 'eserel@perpustakaan.com',
+            'password' => Hash::make('password'),
+            'role' => 'anggota',
+            'status' => 'aktif',
+            'email_verified_at' => now(),
+        ]);
+
+        User::create([
             'name' => 'Citra Dewi',
             'email' => 'petugas@perpustakaan.com',
             'password' => Hash::make('password123'),
