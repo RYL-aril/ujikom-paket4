@@ -50,9 +50,9 @@ Ujikom Paket 4 adalah aplikasi web yang dibangun dengan **Laravel 12** untuk men
 
 Sebelum menjalankan proyek, pastikan sistem Anda memiliki:
 
-- **PHP** 8.2 atau lebih tinggi
+- **PHP** 8.4 atau lebih tinggi
 - **Composer** (package manager PHP)
-- **Node.js** 18+ dan **npm** atau **yarn**
+- **Node.js** 22+ dan **npm** atau **yarn**
 - **Database**: MySQL 5.7+ atau MariaDB
 - **Git** (untuk cloning repository)
 - **Laragon** (opsional, untuk local development)
@@ -64,7 +64,7 @@ Sebelum menjalankan proyek, pastikan sistem Anda memiliki:
 ### 1. Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Yusril0956/ujikom-paket4.git
 cd ujikom-paket4
 ```
 
@@ -92,6 +92,12 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+### 6. Storage Link
+
+```bash
+php artisan storage:link
+```
+
 ---
 
 ## ⚙️ Konfigurasi
@@ -109,12 +115,18 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
+atau
+
+```env
+DB_CONNECTION=sqlite
+```
+
 ### Konfigurasi Aplikasi Lainnya
 
 Sesuaikan konfigurasi lainnya di file `.env` sesuai kebutuhan:
 
 ```env
-APP_NAME="Ujikom Paket 4"
+APP_NAME="Scriptoria"
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost
