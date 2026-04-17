@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class Book extends Model
 {
@@ -54,6 +55,14 @@ class Book extends Model
 
         if (str_starts_with($this->cover_image, 'images_covers/')) {
             return asset($this->cover_image);
+        }
+
+        try {
+            if (Storage::disk('public')->exists($this->cover_image)) {
+                return Storage::disk('public')->url($this->cover_image);
+            }
+        } catch (\Exception $e) {
+            Log::warning('Cover image check failed: ' . $e->getMessage());
         }
 
         return asset('storage/' . $this->cover_image);

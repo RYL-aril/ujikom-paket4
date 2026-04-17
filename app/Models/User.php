@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -137,11 +138,19 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute(): string
     {
-        if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
-            return asset('storage/' . $this->avatar);
+        if (!$this->avatar) {
+            return asset('avatars/default-avatar.svg');
         }
 
-        return asset('avatars/default-avatar.svg');
+        try {
+            if (Storage::disk('public')->exists($this->avatar)) {
+                return Storage::disk('public')->url($this->avatar);
+            }
+        } catch (\Exception $e) {
+            Log::warning('Avatar check failed for user ' . $this->id . ': ' . $e->getMessage());
+        }
+
+        return asset('storage/' . $this->avatar);
     }
 
     public function transaksis()
